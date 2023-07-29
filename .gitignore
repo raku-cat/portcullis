@@ -1,2 +1,3 @@
-servers.list
+servers.*
 python_modules/*
+__pycache__/*

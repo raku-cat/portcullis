@@ -1,166 +1,196 @@
 from screenutils import list_screens, Screen
 import pexpect
+import traceback
+
+import MenuBuilder
+
+import os
 
 
-import random
 
+# Get app's full path to support reading config files when ran from a ForceCommand in sshd_config
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-class InvalidPromptException(Exception):
-    pass
+def get_connections():
+    connections = []
+
+    with open(os.path.join(__location__, 'servers.list'), 'r') as servers:
+        for line in servers:
+            s = line.strip()
+            connections.append(s)
+
+    return connections
+
 
 def QuitApp():
     print("Exiting...")
     exit()
 
 
-class Prompt:
-    
-    def __init__(self, options):
-        if isinstance(options, (list, dict)):
-            self.options = options
-        else:
-            raise InvalidPromptException("Invalid Prompt options, expected type `list` or `dict`, got: "  + type(options).__name__)
+# Probably doesn't need to be in it's own class, too lazy to change it rn..
+class ConsoleUtils:
 
-    def show(self):
-        #print(chr(27) + "[2J")
-        if isinstance(self.options, dict):
-            self.options_values = list(self.options.values())
-        else:
-            self.options_values = self.options
-        for number, option in enumerate(self.options_values, 1):
-            print(str(number) + ".", option)
-        print("e = exit, b = back")
-
-    def input(self):
-        print("-"*30)
-        self.user_selection = input("Select menu option: ")
-
-    def invalid_input(self):
-        input("lnvalid option, press any key to continue...")
-        return None
-   
-    def validate_input(self): 
-        if isinstance(self.options, dict):
-            self.option_keys = list(self.options.keys())
-        elif isinstance(self.options, list):
-            self.option_keys = self.options
-        try:
-            self.user_selection = int(self.user_selection)
-            if 1 <= self.user_selection <= len(self.options):
-                self.user_selection = self.option_keys[self.user_selection - 1]
-                self.validated_selection = self.user_selection
-            else:
-                self.invalid_input()
-        except ValueError:
-            if isinstance(self.user_selection, str):
-                if self.user_selection == "e":
-                    self.validated_selection = "exit_app"
-                elif self.user_selection == "b":
-                    self.validated_selection = "back"
-                else:
-                    self.invalid_input()
-            else:
-                self.invalid_input()
-        except Exception as e:
-            print(e)
-
-
-    def run(self):
-        self.validated_selection = None
-
-        while self.validated_selection is None:  # Keep the loop running until a valid input is received or KeyboardInterrupt occurs.
-            try:
-                self.show()
-                self.input()
-                self.validate_input()
-                if self.validated_selection is not None:
-        #            print("picked: " + self.validated_selection)
-                    return self.validated_selection
-                    break  # Break the loop if a valid input is received.
-
-#            except KeyboardInterrupt:
-#                exit()  # Break the loop if KeyboardInterrupt occurs.
-
-            except Exception as e:
-                print(e)
+    def clear_screen():
+        print("\033[{};1H".format(os.get_terminal_size().lines))
+        os.system("clear")
 
 
 
-
+# Handles displaying application Menus using the inclulded MenuBuilder "engine"
 class Menu:
-    
-    def main(self):
+
+
+    # Iniitiallize layout container and statically assign our title as the app tile
+    def __init__(self):
+        self.prompt_layout = []
+        self.prompt_layout.append(
+            { "title" : "Portcullis" }
+        )
+
+
+    # Displays the requested menu, keeps the menu active until until the user enters a valid input
+    def show(self, menu_list=None):
+        with MenuBuilder.Window(self.prompt_layout) as mb:
+            while True:
+                if "input" in self.prompt_layout:
+                    user_selection = mb.run(capture_input=True)
+                    if user_selection is not None:
+                        menu_selection = mb.validate_input(user_selection, menu_list)
+                        break
+            return menu_selection
+
+
+    # Home menu constructor, returns the user selection
+    def home(self):
         main_menu_options = {
-            "connect": "Connect",
-            "list": "List sessions"
+            "connect_session": "Connect",
+            "list_sessions": "List sessions"
         }
 
-        main_menu = Prompt(main_menu_options)
-        main_selection = main_menu.run()
-        return main_selection
+        self.prompt_layout.append(
+            { "list" : main_menu_options }
+        )
+
+        self.prompt_layout.append("input")
+        return self.show(main_menu_options)
 
 
-    def connect(connections):
-        if connections is not None:
-            connect_menu = Prompt(connections)
-        selected_connection = connect_menu.run()
-        return selected_connection
-    
+    # Connection menu constructor, reeturns the user selection
+    def connect(self, connections):
+        self.prompt_layout.append(
+            { "list" : connections }
+        )
 
+        self.prompt_layout.append("input")
+        return self.show(connections)
+
+
+    # Session attach menu constructor, returns the user selection
+    def attach(self, sessions):
+        self.prompt_layout.append(
+            { "list" : sessions }
+        )
+
+        self.prompt_layout.append("input")
+        return self.show(sessions)
+
+
+# Main app class, handles displaying menus, menu navigation state, and underlying menu option functions
 class Portcullis:
-    
+
+    # Initialize the history list, set our first menu as the home menu, also defines possible menu screens associated with their underlying functions, and navigate to the home menu
     def __init__(self):
-        self.menu_history = []  # Store the history of displayed menus
-        self.navigate()
+        self.navigation_history = []
+        self.current_screen = "home"
+        self.screens = {
+            "home" : self.home,
+            "connect_session" : self.connect_session,
+            "list_sessions" : self.list_sessions,
+        }
+        self.navigate(self.current_screen)
 
 
-    def navigate(self):
+    # Displays the currently selected menu, loops to keep the current menu active until navigated away from
+    def display(self, selection):
         while True:
-            main_selection = Menu().main()
-            self.menu_history.append(main_selection)
-        #    print("main selection was: " + main_selection)
-            getattr(self, main_selection)()
+            ConsoleUtils.clear_screen()
+            self.screens[selection]()
 
 
+    # Handles naviagation between menus and storing navigation history, currently has static special handling for the back and exit functions
+    def navigate(self, selection):
+        if selection == "back":
+            self.back()
+            return
+        elif selection == "exit_app":
+            QuitApp()
+        else:
+            self.navigation_history.append(selection)
+            self.current_screen = selection
+            self.display(self.current_screen)
+
+
+    # Navigates backwards through menus, stops at home by special handling to just display the current window again if the history contains 1 item which should just be the home menu
     def back(self):
-        if len(self.menu_history) > 1:
-            self.menu_history.pop()  # Remove the current menu from history
-            previous_menu = self.menu_history.pop()  # Get the previous menu
-            getattr(self, previous_menu)()  # Display the previous menu
+        print(self.navigation_history)
+        if len(self.navigation_history) > 1:
+            self.navigation_history.pop()
+            self.current_screen = self.navigation_history[-1]  # Remove the current menu from history
 
-    def exit_app(self):
-        QuitApp()
-    
-    def get_connections(self):
-        connections = []
-        with open(r'./servers.list', 'r') as servers:
-            for line in servers:
-                s = line.strip()
-                connections.append(s)
-        return connections
+        self.display(self.current_screen)
 
 
+    # Displays the home menu and navigates to selected menu
+    def home(self):
+        menu_selection = Menu().home()
+        if menu_selection is not None:
+            self.navigate(menu_selection)
 
-    def connect(self):
-        conn_list = self.get_connections()
-        while True:
-            selected_connection = Menu.connect(conn_list)
-            if selected_connection == "exit_app":
-                self.exit_app()
-            elif selected_connection == "back":
-                self.back()
-                return
-            else:
-                try:
-                    screen_command = str("screen -R " + selected_connection + " -- " + "ssh " + selected_connection)
 
-                    child = pexpect.spawn(screen_command)
-                    child.interact()  # This will connect your script to the screen session
-                except pexpect.exceptions.EOF:
-                    print("The screen session has ended.")
-                except pexpect.exceptions.TIMEOUT:
-                    print("Timed out waiting for the screen session.")    
-            
+    # Handles listing of screen sessions and attaching to a selected screen
+    def list_sessions(self):
+        sessions = {}
+        for session in list_screens():
+            sessions.update({session.id : str(session.name + " " + "(" + session.id + ")")})
+        menu_selection = Menu().attach(sessions)
+        if menu_selection not in list(sessions.keys()):
+            self.navigate(menu_selection)
+            return
+        else:
+            selected_session = str(menu_selection)
+        try:
+            screen_command = str("screen -q -r " + selected_session)
+            child = pexpect.spawn(screen_command)
+            child.interact()
+        except Exception:
+            print(traceback.format_exc())
+
+
+    # Handles listing of configured connections 
+    def connect_session(self):
+        connection_list = get_connections()
+        
+        
+        menu_selection = Menu().connect(connection_list)
+
+        if menu_selection not in connection_list:
+            self.navigate(menu_selection)
+            return
+        else:
+            selected_connection = str(menu_selection)
+        try:
+            screen_command = str("screen -q -R " + selected_connection + " -- " + "ssh " + selected_connection)
+            child = pexpect.spawn(screen_command)
+            child.interact()
+        except pexpect.exceptions.EOF:
+            ConsoleUtils.clear_screen()
+            print("The screen session has ended.")
+        except pexpect.exceptions.TIMEOUT:
+            print("Timed out waiting for the screen session.")
+            print("screen closed")
+        except Exception:
+            print(traceback.format_exc())
         
 
 
@@ -171,4 +201,4 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             QuitApp()
         except Exception as e:
-            print("Error:", e)
+            print(traceback.format_exc())
