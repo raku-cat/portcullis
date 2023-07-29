@@ -5,7 +5,7 @@
 <img 
     src="https://github.com/raku-cat/portcullis/assets/1125449/f5c86125-240c-4139-bdf1-32162b787f62" 
     align="right" 
-    height="500"
+    width="550px"
 />
 
 ### Portcullis
@@ -15,10 +15,11 @@
 <img
   src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
   align="left"
-  height="350"
+  width="240px"
+  height="270px"
 />
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br>
 
 ***
 
