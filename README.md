@@ -2,24 +2,25 @@
     Portcullis - An SSH "bouncer" written in Python
 </h1>
 
-<img 
+<button>
+    <img 
     src="https://github.com/raku-cat/portcullis/assets/1125449/f5c86125-240c-4139-bdf1-32162b787f62" 
-    align="right" 
-    width="550px"
-/>
+    align="right"
+    width="60%"
+    />
+</button>
 
-### Portcullis
-*n.* a strong, heavy grating that can be lowered down grooves on each side of a gateway to block it.
-
-
-<img
-  src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
-  align="left"
-  width="240px"
-  height="270px"
-/>
-
-<br><br><br><br><br><br><br><br><br><br><br>
+<button>
+    <dl>
+        <dt><h3>Portcullis</h3></dt>
+        <dd><em>n.</em> a strong, heavy grating that can be lowered down grooves on each side of a gateway to block it.</dd>
+        </dl>
+    <img
+        src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
+        height="340px"
+        width="38%"
+    />
+</button>
 
 ***
 
@@ -43,15 +44,15 @@ Planned:
 ***
 # Usage
 On start the following menu is displayed:
-```
-Portcullis ===========================================================================
+<pre><samp>Portcullis ===========================================================================
 1. Connect
 2. List sessions
 | b = Back | e = Exit |
 ======================================================================================
-Select menu option:
-```
-Navigating is done by entering the desired letter or number option and presing enter.
+Select menu option:</samp></pre>
+Navigation is done by entering the desired letter or number option and presing enter.
+Otherwise uses GNU Screen bindings while connected to a session, to detach from a session 
+without disconnecting use <kbd><kbd>Ctrl</kbd>+<kbd>a</kbd>+<kbd>d</kbd></kbd>.
 
 ***
 
@@ -69,41 +70,53 @@ to read/store configuration, you'll have to accept fingerprints every time, and 
 configurations for individual SSH hosts.
 
 ## Installing Portcullis
-```
+<pre>
 # Create a user
-~ # {useradd||adduser} portcullis
+<samp>
+~ # <kbd>{useradd||adduser} portcullis</kbd>
+</samp>
 
 # Clone the repo
-~ $ git clone https://github.com/raku-cat/portcullis.git /opt/portcullis
+<samp>
+~ $ <kbd>git clone https://github.com/raku-cat/portcullis.git /opt/portcullis</kbd>
 
-~ $ chown -R portcullis:portcullis /opt/portcullis
+~ $ <kbd>chown -R portcullis:portcullis /opt/portcullis</kbd>
+</samp>
 
 # Create the python environment
 # If `make` is available on your system, a Makefile is included which should create the
 # virtualenv and install the pip requirements
-~ $ cd /opt/portcullis
-~ $ make all
+<samp>
+~ $ <kbd>cd /opt/portcullis</kbd>
+~ $ <kbd>make all</kbd>
+</samp>
 # Otherwise, if `make` is unavailable
-~ $ python3 -m venv python_modules
-~ $ python_modules/bin/pip install -r requirements.txt
+<samp>
+~ $ <kbd>python3 -m venv python_modules</kbd>
+~ $ <kbd>python_modules/bin/pip install -r requirements.txt</kbd>
+</samp>
 
 # Create the config
 # Note: An example config is included `servers.list.example`.  
-~ $ printf "user1@server1.tld
+<samp>    
+~ $ <kbd>printf "user1@server1.tld
 user2@server2.tld
-user3@server3.tld" > servers.list
+user3@server3.tld" > servers.list</kbd>
+</samp>
 
 # Configure OpenSSH
-~ # printf \
+<samp>
+~ # <kbd>printf \
 "Match User portcullis
-    ForceCommand /opt/portcullis/python_modules/bin/python /opt/portcullis/app.py" >> /etc/ssh/sshd_config
+    ForceCommand /opt/portcullis/python_modules/bin/python /opt/portcullis/app.py" >> /etc/ssh/sshd_config</kbd>
+</samp>   
 
 # Restart sshd
-~ # systemctl restart sshd
-```
+<samp>
+~ # <kbd>systemctl restart sshd</kbd>
+</samp>
+</pre>
 
 ## Post installation
 Now that the app is set up, manually run it on the Portcullis host to verify functionality:
-```
-~ $ /opt/portcullis/python_modules/bin/python /opt/portcullis/app.py
-```
+<pre><samp>~ $ <kbd>/opt/portcullis/python_modules/bin/python /opt/portcullis/app.py</kbd></samp></pre>
