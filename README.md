@@ -14,15 +14,11 @@
 
 ***
 
-<img
-    src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
-    width=""
-    align="right"
-/>
-
-
 # About
 
+<table>
+<tr>
+<th align="left">
 Designed after an IRC Bouncer, this exists to be an intermediate between an SSH client
 and multiple SSH Servers.  
 The advantage of connecting this way simplifies identity management, as identity between
@@ -38,7 +34,8 @@ Features:
 Planned:
 - In-program configuration editing. (Adding and removing connection options, etc)
 - Killing or force detaching screen session.
-
+</th>
+<th>
 <dl>
     <dt>
         <h3>Portcullis</h3>
@@ -47,15 +44,21 @@ Planned:
         <em>n.</em> a strong, heavy grating that can be lowered down grooves on each side of a gateway to block it.
     </dd>
 </dl>
-<br>
+<p align="center">
+<img
+    src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
+    align="r"
+/>
 </p>
+</tr></th>
 
+</table>
 
 ***
 
 # Usage
 On start the following menu is displayed:
-<pre><samp>Portcullis ====================================================================================================================================================================
+<pre><samp>Portcullis  ===================================================================================================================================================================
 1. Connect
 2. List sessions
 | b = Back | e = Exit |
