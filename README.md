@@ -10,26 +10,19 @@
 />
 </p>
 
+
+
 ***
 
-<dl>
-    <dt>
-        <h3>Portcullis</h3>
-    </dt>
-    <dd>
-        <em>n.</em> a strong, heavy grating that can be lowered down grooves on each side of a gateway to block it.
-    </dd>
-</dl>
-<p align="center">
 <img
     src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
-    width="40%"
+    width=""
+    align="right"
 />
-</p>
 
-***
 
 # About
+
 Designed after an IRC Bouncer, this exists to be an intermediate between an SSH client
 and multiple SSH Servers.  
 The advantage of connecting this way simplifies identity management, as identity between
@@ -46,14 +39,27 @@ Planned:
 - In-program configuration editing. (Adding and removing connection options, etc)
 - Killing or force detaching screen session.
 
+<dl>
+    <dt>
+        <h3>Portcullis</h3>
+    </dt>
+    <dd>
+        <em>n.</em> a strong, heavy grating that can be lowered down grooves on each side of a gateway to block it.
+    </dd>
+</dl>
+<br>
+</p>
+
+
 ***
+
 # Usage
 On start the following menu is displayed:
-<pre><samp>Portcullis ===========================================================================
+<pre><samp>Portcullis ====================================================================================================================================================================
 1. Connect
 2. List sessions
 | b = Back | e = Exit |
-======================================================================================
+============================================================================================================================================================================
 Select menu option:</samp></pre>
 Navigation is done by entering the desired letter or number option and presing enter.
 Otherwise uses GNU Screen bindings while connected to a session, to detach from a session 
