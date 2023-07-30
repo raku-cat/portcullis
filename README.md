@@ -1,6 +1,17 @@
+<p align="center">
+<img
+    src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
+    height="400px"
+/>
+</p>
 <h1 align="center">
-    Portcullis - An SSH "bouncer" written in Python
+    Portcullis
 </h1>
+
+<p align="center">
+<i>n.</i> a strong, heavy grating that can be lowered down grooves on each side of a gateway to block it.
+</p>
+
 
 <p align="center">
 <img
@@ -11,48 +22,34 @@
 </p>
 
 
-
 ***
 
 # About
 
-<table>
-<tr>
-<th align="left">
 Designed after an IRC Bouncer, this exists to be an intermediate between an SSH client
 and multiple SSH Servers.  
-The advantage of connecting this way simplifies identity management, as identity between
+The advantages of connecting this way can simplify identity management, as identity between
 individual clients only needs to be maintained between those clients and the "bouncer"
 host. All identity management for the upstream SSH servers can be centralized within the
-"bouncer" host.
+"bouncer" host.  
 
-Features:
+
+### Features:
 - Simple, text-based, keyboard driven interface.
-- IRC Bouncer style SSH session persitence via GNU Screen.
-- Configuration via a basic text file
+- Configuration uses a basic text file
+- IRC Bouncer style SSH session persistence via GNU Screen.
+- Simplifies access control and identity management with centralized authentication and a single entry point:
+    - All connections to upstream SSH servers are made through the Portcullis host.
+    - Users/clients only need access to and maintain identity with the Portcullis host, which 
+itself may access other privileged networks.
+<b>Note:</b> No security is infalliable, a single point of entry is a single point of failure, follow
+best secuirty practices for your environment.
 
-Planned:
+
+### Planned:
 - In-program configuration editing. (Adding and removing connection options, etc)
 - Killing or force detaching screen session.
-</th>
-<th>
-<dl>
-    <dt>
-        <h3>Portcullis</h3>
-    </dt>
-    <dd>
-        <em>n.</em> a strong, heavy grating that can be lowered down grooves on each side of a gateway to block it.
-    </dd>
-</dl>
-<p align="center">
-<img
-    src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
-    align="r"
-/>
-</p>
-</tr></th>
 
-</table>
 
 ***
 
@@ -65,7 +62,7 @@ On start the following menu is displayed:
 ============================================================================================================================================================================
 Select menu option:</samp></pre>
 Navigation is done by entering the desired letter or number option and presing enter.
-Otherwise uses GNU Screen bindings while connected to a session, to detach from a session 
+Otherwise uses GNU Screen bindings while connected to a session, for exampple, to detach from a session 
 without disconnecting use <kbd><kbd>Ctrl</kbd>+<kbd>a</kbd>+<kbd>d</kbd></kbd>.
 
 ***
