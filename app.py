@@ -179,8 +179,8 @@ class Portcullis:
         else:
             selected_connection = str(menu_selection)
         try:
-            rows = os.get_terminal_size()[0]
-            columns = os.get_terminal_size()[1]
+            rows = os.get_terminal_size()[1]
+            columns = os.get_terminal_size()[0]
             screen_command = f"screen -q -R {selected_connection} -- ssh {selected_connection}"
             child = pexpect.spawn(screen_command, dimensions=(rows,columns))
             child.interact()
