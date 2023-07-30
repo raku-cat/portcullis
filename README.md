@@ -2,13 +2,11 @@
     Portcullis - An SSH "bouncer" written in Python
 </h1>
 
-<button>
-    <img 
-    src="https://github.com/raku-cat/portcullis/assets/1125449/f5c86125-240c-4139-bdf1-32162b787f62" 
-    align="right"
-    width="60%"
-    />
-</button>
+<img 
+src="https://github.com/raku-cat/portcullis/assets/1125449/f5c86125-240c-4139-bdf1-32162b787f62" 
+align="right"
+width="60%"
+/>
 
 <button>
     <dl>
@@ -18,7 +16,7 @@
     <img
         src="https://github.com/raku-cat/portcullis/assets/1125449/255651ef-596a-47e9-b4aa-4f76fa836734"
         height="340px"
-        width="38%"
+        width="35%"
     />
 </button>
 
