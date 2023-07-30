@@ -133,7 +133,6 @@ class Portcullis:
 
     # Navigates backwards through menus, stops at home by special handling to just display the current window again if the history contains 1 item which should just be the home menu
     def back(self):
-        print(self.navigation_history)
         if len(self.navigation_history) > 1:
             self.navigation_history.pop()
             self.current_screen = self.navigation_history[-1]  # Remove the current menu from history
@@ -160,18 +159,18 @@ class Portcullis:
         else:
             selected_session = str(menu_selection)
         try:
-            screen_command = str("screen -q -r " + selected_session)
-            child = pexpect.spawn(screen_command)
+            rows = os.get_terminal_size()[0]
+            columns = os.get_terminal_size()[1]
+            screen_command = f"screen -q -r {selected_session}"
+            child = pexpect.spawn(screen_command, dimensions=(rows,columns))
             child.interact()
         except Exception:
             print(traceback.format_exc())
 
 
-    # Handles listing of configured connections 
+    # Handles listing of configured connections
     def connect_session(self):
         connection_list = get_connections()
-        
-        
         menu_selection = Menu().connect(connection_list)
 
         if menu_selection not in connection_list:
@@ -180,8 +179,10 @@ class Portcullis:
         else:
             selected_connection = str(menu_selection)
         try:
-            screen_command = str("screen -q -R " + selected_connection + " -- " + "ssh " + selected_connection)
-            child = pexpect.spawn(screen_command)
+            rows = os.get_terminal_size()[0]
+            columns = os.get_terminal_size()[1]
+            screen_command = f"screen -q -R {selected_connection} -- ssh {selected_connection}"
+            child = pexpect.spawn(screen_command, dimensions=(rows,columns))
             child.interact()
         except pexpect.exceptions.EOF:
             ConsoleUtils.clear_screen()
@@ -191,7 +192,7 @@ class Portcullis:
             print("screen closed")
         except Exception:
             print(traceback.format_exc())
-        
+
 
 
 if __name__ == "__main__":
